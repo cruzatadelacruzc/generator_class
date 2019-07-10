@@ -1,0 +1,16 @@
+<?xml version = "1.0" encoding="UTF-8" ?>
+<source>
+    <folders>
+        <folder>
+            <excludes>
+                <class>SnippetsSMTModuleController</class>
+            </excludes>
+            <path>D:\Dev\xampp\htdocs\SMT\src\AppBundle\Controller\StoreGeneric</path>
+        </folder>
+    </folders>
+    <classes>
+        <class>AppBundle\Controller\StoreGeneric\BaseStoreController</class>
+        <class>AppBundle\Controller\StoreGeneric\SmtBaseStoreController</class>
+        <class>AppBundle\Controller\StoreGeneric\SMTModuleController</class>
+    </classes>
+</source>
