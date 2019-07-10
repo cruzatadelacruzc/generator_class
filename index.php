@@ -88,9 +88,9 @@ if (isset($_SESSION['smt_generator_output_2019'])): ?>
 <?php unset($_SESSION['smt_generator_output_2019']); endif; ?>
 <form action="src/generator.php" method="post">
     <fieldset>
-        <legend>Form for creating class</legend>
+        <legend>Form to create project</legend>
         <div class="form-group">
-            <label for="project_name" class="required">Project name:</label>
+            <label for="project_name" class="required">Project structure:</label>
             <input id="project_name" type="text" name="project" required placeholder="Controller\Modules"/>
             <label for="bundle_name" class="required" >Bundle name:</label>
             <input type="text" name="bundle" id="bundle_name" required placeholder="WooBundle"/>

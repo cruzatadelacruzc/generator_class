@@ -92,38 +92,49 @@ class Processor
         $bundle = preg_replace('/\s+/', '', $bundle); // remove all whitespace
         $project = preg_replace('/\s+/', '', $project); // remove all whitespace
 
-        foreach ($this->folders as $folder) {
-            $files = self::dirToArray($folder['path']);
-            $classes = array_map(function ($item) {
-                return rtrim($item, '.php');
-            }, $files);
-            if (!empty($folder['excludes']))
-                $classes = array_diff($classes, $folder['excludes']);
-            self::generateClass($classes, $bundle, $project);
-        }
+        // Generate folders
+        foreach ($this->folders as $folder)
+            self::generateFolderContent($folder['path'], $folder['excludes'], $bundle, $project);
 
         // Generate only classes
-        if (!empty($this->classes)) {
-            self::generateClass($this->classes, $bundle, $project);
-        }
+        foreach ($this->classes as $class)
+            self::createClass($bundle, $class, $project);
 
         $this->output[] = '<strong>Everything is OK! Now get to work :).</strong>';
         return true;
     }
 
-
     /**
-     * Generate class
-     * @param $classes
+     * Generate the classes contained into folder
+     * @param $path  <p> folder path</>
+     * @param $excludes
      * @param $bundle
      * @param $project
      * @throws Exception
      */
-    private function generateClass($classes, $bundle, $project)
+    private function generateFolderContent($path, $excludes, $bundle, $project)
     {
-        foreach ($classes as $class) {
-            self::createClass($bundle, $class, $project);
+        $content = self::fetchFolder($path);
+        foreach ($content as $nameFolder => $file) {
+            if (!is_array($file)) {  // if file is a class
+                $class = rtrim($file, '.php'); // remove extension .php
+                if (!array_search($class, $excludes)){ // check if no exclude
+                    $sourceClass = explode('src\\', $path);
+                    $sourceClass = $sourceClass[1] . '\\' . $class; // create chain like that AppBundle\Controller\StoreGeneric\BaseStoreController
+                    self::createClass($bundle, $sourceClass, $project);
+                }
+            } else if (is_array($file) && !empty($file)) { // if file is a folder
+                $classes = array_map( function ($item) { return rtrim($item, '.php'); }, $file); //  remove extension .php to all classes
+                if (!empty($excludes)) $classes = array_diff($classes, $excludes); // remove excluded classes
+                foreach ($classes as $class) {
+                    $sourceClass = explode('src\\', $path);
+                    $sourceClass = $sourceClass[1] . '\\' . $class; // create chain like that AppBundle\Controller\StoreGeneric\BaseStoreController
+                    $project_path = $project . '/' . $nameFolder;
+                    self::createClass($bundle, $sourceClass, $project_path);
+                }
+            }
         }
+
     }
 
 
@@ -234,14 +245,14 @@ class Processor
      * @param $dir
      * @return array
      */
-    function dirToArray($dir)
+    function fetchFolder($dir)
     {
         $result = array();
         $cdir = scandir($dir);
         foreach ($cdir as $key => $value) {
             if (!in_array($value, array(".", ".."))) {
                 if (is_dir($dir . DIRECTORY_SEPARATOR . $value)) {
-                    $result[$value] = self::dirToArray($dir . DIRECTORY_SEPARATOR . $value);
+                    $result[$value] = self::fetchFolder($dir . DIRECTORY_SEPARATOR . $value);
                 } else {
                     $result[] = $value;
                 }
@@ -249,6 +260,5 @@ class Processor
         }
         return $result;
     }
-
 
 }
