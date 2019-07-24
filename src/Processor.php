@@ -84,21 +84,22 @@ class Processor
      * Generate all PHP classes and Folders
      * @param $bundle
      * @param $project
+     * @param $class_prefix
      * @return bool
      * @throws Exception
      */
-    public function generateProject($bundle, $project)
+    public function generateProject($bundle, $project, $class_prefix)
     {
         $bundle = preg_replace('/\s+/', '', $bundle); // remove all whitespace
         $project = preg_replace('/\s+/', '', $project); // remove all whitespace
 
         // Generate folders
         foreach ($this->folders as $folder)
-            self::generateFolderContent($folder['path'], $folder['excludes'], $bundle, $project);
+            self::generateFolderContent($folder['path'], $folder['excludes'], $bundle, $project, $class_prefix);
 
         // Generate only classes
         foreach ($this->classes as $class)
-            self::createClass($bundle, $class, $project);
+            self::createClass($bundle, $class, $project, $class_prefix);
 
         $this->output[] = '<strong>Everything is OK! Now get to work :).</strong>';
         return true;
@@ -112,7 +113,7 @@ class Processor
      * @param $project
      * @throws Exception
      */
-    private function generateFolderContent($path, $excludes, $bundle, $project)
+    private function generateFolderContent($path, $excludes, $bundle, $project, $class_prefix)
     {
         $content = self::fetchFolder($path);
         foreach ($content as $nameFolder => $file) {
@@ -121,7 +122,7 @@ class Processor
                 if (!array_search($class, $excludes)){ // check if no exclude
                     $sourceClass = explode('src\\', $path);
                     $sourceClass = $sourceClass[1] . '\\' . $class; // create chain like that AppBundle\Controller\StoreGeneric\BaseStoreController
-                    self::createClass($bundle, $sourceClass, $project);
+                    self::createClass($bundle, $sourceClass, $project, $class_prefix);
                 }
             } else if (is_array($file) && !empty($file)) { // if file is a folder
                 $classes = array_map( function ($item) { return rtrim($item, '.php'); }, $file); //  remove extension .php to all classes
@@ -130,7 +131,7 @@ class Processor
                     $sourceClass = explode('src\\', $path);
                     $sourceClass = $sourceClass[1] . '\\' . $class; // create chain like that AppBundle\Controller\StoreGeneric\BaseStoreController
                     $project_path = $project . '/' . $nameFolder;
-                    self::createClass($bundle, $sourceClass, $project_path);
+                    self::createClass($bundle, $sourceClass, $project_path, $class_prefix);
                 }
             }
         }
@@ -143,14 +144,15 @@ class Processor
      * @param $bundle
      * @param $sourceClass
      * @param $project
+     * @param $class_prefix
      * @throws Exception
      */
-    function createClass($bundle, $sourceClass, $project)
+    function createClass($bundle, $sourceClass, $project, $class_prefix)
     {
         $classname = explode("\\", $sourceClass);
         $parent = end($classname);
         $parent_use = 'use ' . $sourceClass . ';';
-        $filename = $bundle . end($classname);
+        $filename = $class_prefix . end($classname);
         $output_dir = dirname(__FILE__, 2) . DIRECTORY_SEPARATOR . 'project' . DIRECTORY_SEPARATOR;
         $project_path = $output_dir . $project . DIRECTORY_SEPARATOR;
         $namespace = $bundle . '\\' . str_replace('/', '\\', $project);

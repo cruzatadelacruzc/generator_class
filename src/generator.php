@@ -7,14 +7,17 @@
  */
 
 
-if ((isset($_POST['project']) && !empty($_POST['project'])) && (isset($_POST['bundle']) && !empty($_POST['bundle']))) {
+if ((isset($_POST['project']) && !empty($_POST['project'])) &&
+    (isset($_POST['bundle']) && !empty($_POST['bundle']))&&
+    (isset($_POST['prefix']) && !empty($_POST['prefix']))) {
     $project = $_POST['project'];
     $bundle = $_POST['bundle'];
+    $class_prefix = $_POST['prefix'];
 
     require_once('Processor.php');
     try {
         $processor = new Processor();
-        $result = $processor->generateProject($bundle, $project);
+        $result = $processor->generateProject($bundle, $project, $class_prefix);
         if ($result) {
             session_start();
             $_SESSION['smt_generator_output_2019'] = $processor->output;

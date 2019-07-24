@@ -94,6 +94,8 @@ if (isset($_SESSION['smt_generator_output_2019'])): ?>
             <input id="project_name" type="text" name="project" required placeholder="Controller\Modules"/>
             <label for="bundle_name" class="required" >Bundle name:</label>
             <input type="text" name="bundle" id="bundle_name" required placeholder="WooBundle"/>
+            <label for="bundle_name" class="required" >Class name prefix:</label>
+            <input type="text" name="prefix" id="bundle_name" required placeholder="Woo"/>
             <input type="submit" value="Generate">
         </div>
     </fieldset>
