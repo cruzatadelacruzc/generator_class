@@ -3,14 +3,9 @@
     <folders>
         <folder>
             <excludes>
-                <class>SnippetsSMTModuleController</class>
+                <class>SMTModule</class>
             </excludes>
-            <path>D:\Dev\xampp\htdocs\SMT\src\AppBundle\Controller\StoreGeneric</path>
+            <path>D:\xampp\htdocs\sassympresta\src\AppBundle\Classes\StoreGeneric</path>
         </folder>
     </folders>
-    <classes>
-        <class>AppBundle\Controller\StoreGeneric\BaseStoreController</class>
-        <class>AppBundle\Controller\StoreGeneric\SmtBaseStoreController</class>
-        <class>AppBundle\Controller\StoreGeneric\SMTModuleController</class>
-    </classes>
 </source>
